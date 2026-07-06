@@ -110,6 +110,25 @@ async function onAvatarChange(e) {
         <span v-if="!collapsed">分类</span>
       </router-link>
     </nav>
+
+    <!-- 获取客户端（仅网页端显示） -->
+    <div v-if="!isElectron" class="sidebar-download">
+      <a
+        class="download-bar"
+        href="https://github.com/spinningdick/lanime-desktop/releases/latest/download/Lanime-Setup.exe"
+        target="_blank"
+        :title="collapsed ? '下载客户端' : ''"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+        <span v-if="!collapsed" class="dl-text">
+          <span class="dl-title">获取客户端</span>
+          <span class="dl-sub">Windows 安装包</span>
+        </span>
+        <svg v-if="!collapsed" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </a>
+    </div>
   </aside>
 
   <!-- 登录弹窗 -->
@@ -308,4 +327,73 @@ async function onAvatarChange(e) {
   color: #f06b8a;
 }
 
+/* ===== 获取客户端 ===== */
+.sidebar-download {
+  padding: 0 8px 16px;
+  margin-top: auto;
+}
+
+.collapsed .sidebar-download {
+  display: flex;
+  justify-content: center;
+}
+
+.download-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(74,140,247,0.06);
+  border: 1px solid rgba(74,140,247,0.12);
+  color: #b0adc2;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.collapsed .download-bar {
+  padding: 10px;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.download-bar:hover {
+  background: rgba(74,140,247,0.12);
+  border-color: rgba(74,140,247,0.3);
+  color: #fff;
+}
+
+.download-bar > svg:first-child {
+  color: #4a8cf7;
+  flex-shrink: 0;
+}
+
+.dl-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.dl-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #edeaf5;
+}
+
+.dl-sub {
+  font-size: 10px;
+  color: #6b6880;
+}
+
+.download-bar > svg:last-child {
+  color: #6b6880;
+  flex-shrink: 0;
+}
+
+.download-bar:hover > svg:last-child {
+  color: #4a8cf7;
+}
 </style>

@@ -31,4 +31,4 @@ nsis:
   shortcutName: Lanime
 
 # 安装包文件名
-artifactName: ${productName}-Setup-${version}.${ext}
+artifactName: ${productName}-Setup.${ext}
