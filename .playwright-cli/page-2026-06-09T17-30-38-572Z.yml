@@ -1,0 +1,43 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "Lanime Lanime" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - img "Lanime" [ref=e7]
+        - generic [ref=e8]: Lanime
+      - generic:
+        - link "首页":
+          - /url: /
+          - img
+          - generic: 首页
+        - link "排行榜":
+          - /url: /ranking
+          - img
+          - generic: 排行榜
+        - link "收藏":
+          - /url: /collections
+          - img
+          - generic: 收藏
+        - link "历史":
+          - /url: /history
+          - img
+          - generic: 历史
+        - link "R18":
+          - /url: /r18
+          - img
+          - generic: R18
+      - generic [ref=e9]:
+        - img
+        - searchbox "搜索番剧..." [ref=e10]
+      - button "menu" [ref=e11] [cursor=pointer]:
+        - img [ref=e12]
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - heading "排行榜" [level=2] [ref=e16]
+        - paragraph [ref=e17]: 全站热门动漫排名
+        - generic [ref=e18]:
+          - button "周榜" [ref=e19] [cursor=pointer]
+          - button "月榜" [ref=e20] [cursor=pointer]
+          - button "总榜" [ref=e21] [cursor=pointer]
+      - generic [ref=e22]: 暂无排行数据

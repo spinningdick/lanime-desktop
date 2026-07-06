@@ -1,0 +1,40 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "Lanime Lanime" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - img "Lanime" [ref=e7]
+        - generic [ref=e8]: Lanime
+      - generic:
+        - link "首页":
+          - /url: /
+          - img
+          - generic: 首页
+        - link "排行榜":
+          - /url: /ranking
+          - img
+          - generic: 排行榜
+        - link "收藏":
+          - /url: /collections
+          - img
+          - generic: 收藏
+        - link "历史":
+          - /url: /history
+          - img
+          - generic: 历史
+        - link "R18":
+          - /url: /r18
+          - img
+          - generic: R18
+      - generic [ref=e9]:
+        - img
+        - searchbox "搜索番剧..." [ref=e10]
+      - button "menu" [ref=e11] [cursor=pointer]:
+        - img [ref=e12]
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - heading "\"\" 的搜索结果" [level=2] [ref=e16]
+      - generic [ref=e17]:
+        - img [ref=e18]
+        - paragraph [ref=e22]: 未找到相关内容
+        - text: 试试其他关键词

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lanime Splash</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+
+  .splash {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .splash.expanded {
+    /* logo+文字阶段撑开 */
+    width: auto;
+    height: auto;
+  }
+
+  /* ===== 视频 ===== */
+  .anim-stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .anim-stage video {
+    width: 260px;
+    height: 260px;
+    display: block;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+
+  .anim-stage.fading video {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ===== Logo + 文字 ===== */
+  .logo-stage {
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-stage.active {
+    display: flex;
+  }
+
+  .logo-wrap {
+    z-index: 2;
+    flex-shrink: 0;
+    border-radius: 18px;
+    box-shadow:
+      0 0 30px rgba(74, 140, 247, 0.35),
+      0 0 60px rgba(240, 107, 138, 0.2),
+      0 0 90px rgba(74, 140, 247, 0.12);
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+
+  .logo-wrap img {
+    display: block;
+    width: 68px;
+    height: 68px;
+    border-radius: 18px;
+    /* 从视频大小过渡到 logo 大小 */
+    animation: logoLand 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    /* 初始匹配视频大小 260/68 ≈ 3.82 */
+    transform-origin: center center;
+  }
+
+  @keyframes logoLand {
+    0% {
+      transform: scale(3.82);
+      opacity: 0.5;
+    }
+    30% {
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes glowPulse {
+    0%, 100% {
+      box-shadow:
+        0 0 30px rgba(74, 140, 247, 0.35),
+        0 0 60px rgba(240, 107, 138, 0.2),
+        0 0 90px rgba(74, 140, 247, 0.12);
+    }
+    50% {
+      box-shadow:
+        0 0 40px rgba(74, 140, 247, 0.5),
+        0 0 75px rgba(240, 107, 138, 0.3),
+        0 0 110px rgba(74, 140, 247, 0.2);
+    }
+  }
+
+  /* ===== 文字 ===== */
+  .text-wrap {
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 0;
+    opacity: 0;
+  }
+
+  .text-wrap.show {
+    animation: textReveal 0.55s 0.4s ease forwards;
+  }
+
+  .text-wrap span {
+    display: inline-block;
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    padding-left: 20px;
+    background: linear-gradient(135deg, #4a8cf7, #f06b8a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    white-space: nowrap;
+  }
+
+  @keyframes textReveal {
+    0% {
+      max-width: 0;
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    100% {
+      max-width: 300px;
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* ===== 渐隐退出 ===== */
+  .splash.fadeout {
+    animation: fadeOut 0.6s ease forwards;
+  }
+
+  @keyframes fadeOut {
+    to { opacity: 0; transform: scale(0.92); filter: blur(4px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="splash" id="splash">
+  <!-- 视频 -->
+  <div class="anim-stage" id="animStage">
+    <video src="cat-anim.webm" id="catVideo" autoplay muted playsinline></video>
+  </div>
+
+  <!-- Logo + 文字 -->
+  <div class="logo-stage" id="logoStage">
+    <div class="logo-wrap">
+      <img src="icon-256.png" alt="Lanime" />
+    </div>
+    <div class="text-wrap" id="textWrap">
+      <span>Lanime</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const video = document.getElementById('catVideo')
+  const animStage = document.getElementById('animStage')
+  const logoStage = document.getElementById('logoStage')
+  const textWrap = document.getElementById('textWrap')
+  const splash = document.getElementById('splash')
+
+  video.addEventListener('ended', () => {
+    // 视频淡出（极快）
+    animStage.classList.add('fading')
+
+    // 同时 logo 浮现（从视频大小缩到 logo 大小）
+    logoStage.classList.add('active')
+    splash.classList.add('expanded')
+    textWrap.classList.add('show')
+
+    // 视频淡出完成后移除
+    setTimeout(() => {
+      animStage.style.display = 'none'
+    }, 450)
+
+    // 停留一会儿渐隐退出
+    setTimeout(() => {
+      splash.classList.add('fadeout')
+    }, 3200)
+  })
+
+  // fallback
+  video.addEventListener('error', () => {
+    animStage.style.display = 'none'
+    logoStage.classList.add('active')
+    splash.classList.add('expanded')
+    textWrap.classList.add('show')
+  })
+</script>
+
+</body>
+</html>

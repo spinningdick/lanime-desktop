@@ -1,0 +1,9 @@
+name = "dm-anime"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "anime-site-db"
+database_id = "f7e28337-df86-4ef9-b95c-c41c396260c2"

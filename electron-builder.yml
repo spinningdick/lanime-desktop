@@ -1,0 +1,34 @@
+appId: com.lanime.desktop
+productName: Lanime
+copyright: Copyright © 2024 Lanime
+
+directories:
+  output: release
+  buildResources: public
+
+publish: null
+
+files:
+  - dist/**/*
+  - electron/**/*.cjs
+  - package.json
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: public/icon-256.ico
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: public/icon-256.ico
+  uninstallerIcon: public/icon-256.ico
+  installerHeaderIcon: public/icon-256.ico
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Lanime
+
+# 安装包文件名
+artifactName: ${productName}-Setup-${version}.${ext}

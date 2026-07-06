@@ -1,0 +1,33 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "Lanime Lanime" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - img "Lanime" [ref=e7]
+        - generic [ref=e8]: Lanime
+      - generic [ref=e9]:
+        - link "首页" [ref=e10] [cursor=pointer]:
+          - /url: /
+          - img [ref=e11]
+          - generic [ref=e14]: 首页
+        - link "排行榜" [ref=e15] [cursor=pointer]:
+          - /url: /ranking
+          - img [ref=e16]
+          - generic [ref=e21]: 排行榜
+        - link "收藏" [ref=e22] [cursor=pointer]:
+          - /url: /collections
+          - img [ref=e23]
+          - generic [ref=e25]: 收藏
+        - link "历史" [ref=e26] [cursor=pointer]:
+          - /url: /history
+          - img [ref=e27]
+          - generic [ref=e30]: 历史
+        - link "R18" [ref=e31] [cursor=pointer]:
+          - /url: /r18
+          - img [ref=e32]
+          - generic [ref=e35]: R18
+      - generic [ref=e36]:
+        - img
+        - searchbox "搜索番剧..." [ref=e37]
+  - main [ref=e38]:
+    - heading "最新更新" [level=2] [ref=e41]

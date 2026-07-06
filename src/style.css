@@ -1,0 +1,297 @@
+/* ============================================
+   Lanime — Hand-Crafted Anime Design System
+   No AI slop. No generic emojis. No cookie-cutter.
+   ============================================ */
+
+:root {
+  /* Unique palette — pink + blue blend */
+  --bg-abyss: #07060f;
+  --bg-deep: #0c0b18;
+  --bg-surface: #121122;
+  --bg-card: #18172e;
+  --bg-card-hover: #1f1d3a;
+  --bg-glass: rgba(16, 14, 32, 0.7);
+
+  --pink: #f06b8a;
+  --pink-light: #f599ae;
+  --pink-glow: rgba(240, 107, 138, 0.25);
+  --blue: #4A8CF7;
+  --blue-light: #7AACFA;
+  --blue-glow: rgba(74, 140, 247, 0.22);
+  --pink-blue: linear-gradient(135deg, #f06b8a 0%, #7A8CF7 100%);
+  --blue-pink: linear-gradient(135deg, #4A8CF7 0%, #f06b8a 100%);
+  /* legacy aliases */
+  --sakura: var(--pink);
+  --sakura-light: var(--pink-light);
+  --sakura-glow: var(--pink-glow);
+  --indigo: var(--blue);
+  --indigo-light: var(--blue-light);
+  --indigo-glow: var(--blue-glow);
+  --gold: #e8c560;
+  --gold-glow: rgba(232, 197, 96, 0.2);
+
+  --accent: var(--pink);
+  --accent-light: var(--pink-light);
+  --accent-glow: var(--pink-glow);
+
+  --text-primary: #edeaf5;
+  --text-secondary: #b0adc2;
+  --text-muted: #6b6880;
+  --text-dim: #484560;
+
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-card: rgba(255, 255, 255, 0.07);
+  --border-glow: rgba(240, 107, 138, 0.2);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================
+   Reset & Base
+   ============================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg-abyss);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* === Subtle animated grain texture === */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 25% 0%, rgba(240, 107, 138, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 100%, rgba(74, 140, 247, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(180, 120, 200, 0.02) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: ambientShift 20s ease-in-out infinite alternate;
+}
+
+@keyframes ambientShift {
+  0% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   Section Title — clean, no emoji
+   ============================================ */
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 36px 0 18px;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-title::before {
+  content: '';
+  width: 3px;
+  height: 20px;
+  background: var(--pink-blue);
+  border-radius: 2px;
+}
+
+/* ============================================
+   Anime Card Grid — iOS liquid glass
+   ============================================ */
+.anime-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 16px;
+}
+
+.anime-card {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  /* 液态玻璃 */
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  /* 浮起过渡 */
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              border-color 0.45s ease,
+              background 0.45s ease;
+  cursor: pointer;
+  animation: cardEnter 0.5s var(--ease-out) backwards;
+}
+.anime-card:nth-child(1) { animation-delay: 0.03s; }
+.anime-card:nth-child(2) { animation-delay: 0.06s; }
+.anime-card:nth-child(3) { animation-delay: 0.09s; }
+.anime-card:nth-child(4) { animation-delay: 0.12s; }
+.anime-card:nth-child(5) { animation-delay: 0.15s; }
+.anime-card:nth-child(6) { animation-delay: 0.18s; }
+.anime-card:nth-child(7) { animation-delay: 0.21s; }
+.anime-card:nth-child(8) { animation-delay: 0.24s; }
+
+/* 悬浮浮起效果 */
+.anime-card:hover {
+  transform: translateY(-10px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(240, 107, 138, 0.3);
+  box-shadow:
+    0 20px 40px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 0 60px -10px rgba(240, 107, 138, 0.12);
+  z-index: 2;
+}
+.anime-card img {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  display: block;
+  background: rgba(0, 0, 0, 0.2);
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.anime-card:hover img {
+  transform: scale(1.06);
+}
+.anime-card .card-title {
+  padding: 10px 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.1px;
+}
+
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s var(--ease-out);
+  letter-spacing: -0.1px;
+  font-family: inherit;
+}
+.btn-primary {
+  background: var(--pink-blue);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(242, 132, 158, 0.3);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(242, 132, 158, 0.4);
+}
+
+/* ============================================
+   Loading — skeleton pulse
+   ============================================ */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+  font-size: 14px;
+  gap: 16px;
+}
+.loading::before {
+  content: '';
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--border-subtle);
+  border-top-color: var(--sakura);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Skeleton shimmer for cards */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ============================================
+   Scrollbar
+   ============================================ */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-abyss); }
+::-webkit-scrollbar-thumb { background: var(--bg-card-hover); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+/* ============================================
+   Utilities
+   ============================================ */
+.text-sakura { color: var(--sakura); }
+.text-indigo { color: var(--indigo); }
+.text-gold { color: var(--gold); }
+.text-muted { color: var(--text-muted); }
+
+@media (max-width: 768px) {
+  .container { padding: 0 16px; }
+  .anime-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .section-title { font-size: 18px; margin: 24px 0 14px; }
+}
