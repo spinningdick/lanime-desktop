@@ -32,10 +32,6 @@ function triggerAvatar() {
 async function onAvatarChange(e) {
   const file = e.target.files?.[0]
   if (!file) return
-  if (file.size > 200 * 1024) {
-    alert('图片太大了，请选择 200KB 以内的图片')
-    return
-  }
   const result = await updateAvatar(file)
   if (!result.success) alert(result.error)
 }

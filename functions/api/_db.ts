@@ -130,37 +130,43 @@ export async function replaceEpisodes(db: D1Database, animeId: number, episodes:
 
 // ========== Collection CRUD ==========
 
-export async function addCollection(db: D1Database, animeId: number) {
-  await db.prepare('INSERT OR IGNORE INTO collection (anime_id) VALUES (?)').bind(animeId).run();
+export async function addCollection(db: D1Database, animeId: number, userId?: number) {
+  if (!userId) return;
+  await db.prepare('INSERT OR IGNORE INTO collection (anime_id, user_id) VALUES (?, ?)').bind(animeId, userId).run();
 }
 
-export async function removeCollection(db: D1Database, animeId: number) {
-  await db.prepare('DELETE FROM collection WHERE anime_id = ?').bind(animeId).run();
+export async function removeCollection(db: D1Database, animeId: number, userId?: number) {
+  if (!userId) return;
+  await db.prepare('DELETE FROM collection WHERE anime_id = ? AND user_id = ?').bind(animeId, userId).run();
 }
 
-export async function listCollections(db: D1Database): Promise<D1Anime[]> {
+export async function listCollections(db: D1Database, userId?: number): Promise<D1Anime[]> {
+  if (!userId) return [];
   const { results } = await db.prepare(`
     SELECT a.* FROM anime a
     INNER JOIN collection c ON c.anime_id = a.id
+    WHERE c.user_id = ?
     ORDER BY c.created_at DESC
-  `).all<D1Anime>();
+  `).bind(userId).all<D1Anime>();
   return results || [];
 }
 
 // ========== History CRUD ==========
 
-export async function listHistory(db: D1Database): Promise<any[]> {
+export async function listHistory(db: D1Database, userId?: number): Promise<any[]> {
+  if (!userId) return [];
   const { results } = await db.prepare(
-    'SELECT * FROM history ORDER BY updated_at DESC LIMIT 100'
-  ).all();
+    'SELECT * FROM history WHERE user_id = ? ORDER BY updated_at DESC LIMIT 100'
+  ).bind(userId).all();
   return results || [];
 }
 
-export async function saveHistory(db: D1Database, data: any) {
-  // 按 anime_id 去重：同一动漫只保留最新观看记录
+export async function saveHistory(db: D1Database, data: any, userId?: number) {
+  if (!userId) return;
+  // 按 anime_id + user_id 去重：同一用户同一动漫只保留最新观看记录
   const existing = await db.prepare(
-    'SELECT id FROM history WHERE anime_id = ?'
-  ).bind(data.anime_id).first();
+    'SELECT id FROM history WHERE anime_id = ? AND user_id = ?'
+  ).bind(data.anime_id, userId).first();
 
   if (existing) {
     await db.prepare(`
@@ -179,11 +185,11 @@ export async function saveHistory(db: D1Database, data: any) {
     ).run();
   } else {
     await db.prepare(`
-      INSERT INTO history (anime_id, episode_id, anime_title, episode_title,
+      INSERT INTO history (anime_id, user_id, episode_id, anime_title, episode_title,
         cover_url, episode_number, source_index, progress, duration)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
-      data.anime_id, data.episode_id || null, data.anime_title || '',
+      data.anime_id, userId, data.episode_id || null, data.anime_title || '',
       data.episode_title || '', data.cover_url || '',
       data.episode_number || 1, data.source_index || 0,
       data.progress || 0, data.duration || 0
@@ -191,10 +197,12 @@ export async function saveHistory(db: D1Database, data: any) {
   }
 }
 
-export async function deleteHistoryItem(db: D1Database, id: number) {
-  await db.prepare('DELETE FROM history WHERE id = ?').bind(id).run();
+export async function deleteHistoryItem(db: D1Database, id: number, userId?: number) {
+  if (!userId) return;
+  await db.prepare('DELETE FROM history WHERE id = ? AND user_id = ?').bind(id, userId).run();
 }
 
-export async function clearHistory(db: D1Database) {
-  await db.prepare('DELETE FROM history').run();
+export async function clearHistory(db: D1Database, userId?: number) {
+  if (!userId) return;
+  await db.prepare('DELETE FROM history WHERE user_id = ?').bind(userId).run();
 }

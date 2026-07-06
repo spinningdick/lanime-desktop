@@ -83,8 +83,9 @@ export function useAuth() {
   }
 
   async function updateAvatar(file) {
-    // 读文件转 base64 data URL
-    const dataUrl = await new Promise((resolve, reject) => {
+    // 前端压缩：缩到 256x256，JPEG 质量 0.7，体积小不影响显示
+    const compressed = await compressImage(file, 256, 0.7)
+    const dataUrl = compressed || await new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onload = () => resolve(reader.result)
       reader.onerror = reject
@@ -108,6 +109,38 @@ export function useAuth() {
     } finally {
       state.loading = false
     }
+  }
+
+  function compressImage(file, maxSize, quality) {
+    return new Promise((resolve) => {
+      const img = new Image()
+      const url = URL.createObjectURL(file)
+      img.onload = () => {
+        URL.revokeObjectURL(url)
+        let { width, height } = img
+        if (width <= maxSize && height <= maxSize) {
+          // 不需要缩放，但还是转 JPEG 压缩
+        }
+        if (width > height) {
+          height = Math.round(height * maxSize / width)
+          width = maxSize
+        } else {
+          width = Math.round(width * maxSize / height)
+          height = maxSize
+        }
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
+        resolve(canvas.toDataURL('image/jpeg', quality))
+      }
+      img.onerror = () => {
+        URL.revokeObjectURL(url)
+        resolve(null) // 压缩失败走原始流程
+      }
+      img.src = url
+    })
   }
 
   function logout() {

@@ -201,8 +201,8 @@ export async function onRequest(context: PagesContext) {
 
     const body = await request.json().catch(() => ({}));
     const avatar = body.avatar || '';
-    // 限制大小：data URL 不超过 200KB
-    if (avatar && avatar.length > 270000) return json({ error: '图片太大，请压缩后再试' }, 400);
+    // 前端已压缩，这里只做兜底限制（data URL 不超过 500KB）
+    if (avatar && avatar.length > 700000) return json({ error: '图片太大' }, 400);
 
     await env.DB.prepare('UPDATE users SET avatar = ? WHERE id = ?')
       .bind(avatar, payload.id).run();
@@ -232,7 +232,13 @@ export async function onRequest(context: PagesContext) {
         }
         for (const t of items) {
           const tag = t.trim();
-          if (tag && tag.length < 30) tagSet.add(tag);
+          if (!tag || tag.length >= 30) continue;
+          // 英文/纯ASCII标签统一为"其他"
+          if (/^[\x00-\x7F]+$/.test(tag)) {
+            tagSet.add('其他');
+          } else {
+            tagSet.add(tag);
+          }
         }
       }
     }
@@ -743,22 +749,30 @@ export async function onRequest(context: PagesContext) {
 
   // ==================== /api/history/clear ====================
   if (path === '/api/history/clear' && method === 'POST') {
-    await db.clearHistory(env.DB).catch(() => {});
+    const auth = request.headers.get('Authorization') || '';
+    const user = await verifyJWT(auth);
+    if (!user) return json({ error: '请先登录' }, 401);
+    await db.clearHistory(env.DB, user.id).catch(() => {});
     return json({ message: '已清空' });
   }
 
   // ==================== /api/history/:id ====================
   const historyDelMatch = path.match(/^\/api\/history\/(\d+)$/);
   if (historyDelMatch && method === 'DELETE') {
+    const auth = request.headers.get('Authorization') || '';
+    const user = await verifyJWT(auth);
+    if (!user) return json({ error: '请先登录' }, 401);
     const id = parseInt(historyDelMatch[1]);
-    await db.deleteHistoryItem(env.DB, id).catch(() => {});
+    await db.deleteHistoryItem(env.DB, id, user.id).catch(() => {});
     return json({ message: '已删除' });
   }
 
   // ==================== /api/collections ====================
   if (path === '/api/collections') {
     if (method === 'GET') {
-      const items = await db.listCollections(env.DB).catch(() => []);
+      const auth = request.headers.get('Authorization') || '';
+      const user = await verifyJWT(auth);
+      const items = await db.listCollections(env.DB, user?.id).catch(() => []);
       return json(items.map(animeRowToResponse));
     }
   }
@@ -766,13 +780,16 @@ export async function onRequest(context: PagesContext) {
   // ==================== /api/collection/:animeId ====================
   const collectionMatch = path.match(/^\/api\/collection\/(\d+)$/);
   if (collectionMatch) {
+    const auth = request.headers.get('Authorization') || '';
+    const user = await verifyJWT(auth);
+    if (!user) return json({ error: '请先登录' }, 401);
     const animeId = parseInt(collectionMatch[1]);
     if (method === 'POST') {
-      await db.addCollection(env.DB, animeId).catch(() => {});
+      await db.addCollection(env.DB, animeId, user.id).catch(() => {});
       return json({ message: '收藏成功' });
     }
     if (method === 'DELETE') {
-      await db.removeCollection(env.DB, animeId).catch(() => {});
+      await db.removeCollection(env.DB, animeId, user.id).catch(() => {});
       return json({ message: '取消收藏' });
     }
   }
@@ -780,7 +797,9 @@ export async function onRequest(context: PagesContext) {
   // ==================== /api/history ====================
   if (path === '/api/history') {
     if (method === 'GET') {
-      const items = await db.listHistory(env.DB).catch(() => []);
+      const auth = request.headers.get('Authorization') || '';
+      const user = await verifyJWT(auth);
+      const items = await db.listHistory(env.DB, user?.id).catch(() => []);
       const enriched = await Promise.all(items.map(async (item: any) => {
         if (item.anime_id) {
           const anime = await db.findAnimeById(env.DB, item.anime_id).catch(() => null);
@@ -793,8 +812,11 @@ export async function onRequest(context: PagesContext) {
       return json(enriched);
     }
     if (method === 'POST') {
+      const auth = request.headers.get('Authorization') || '';
+      const user = await verifyJWT(auth);
+      if (!user) return json({ message: 'ok' }); // 未登录静默跳过
       const data = await request.json();
-      await db.saveHistory(env.DB, data).catch(() => {});
+      await db.saveHistory(env.DB, data, user.id).catch(() => {});
       return json({ message: 'ok' });
     }
   }

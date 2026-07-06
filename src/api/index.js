@@ -21,6 +21,15 @@ const api = axios.create({
   timeout: 30000,
 })
 
+// 自动附带 JWT token
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('lanime_token')
+  if (token) {
+    config.headers.Authorization = 'Bearer ' + token
+  }
+  return config
+})
+
 export { api }
 
 // 占位图 — 桌面端用完整 URL，web 端用相对路径
